@@ -28,9 +28,29 @@ async function connect() {
     })
 
     app.post("/new-post", validatePost, async function (req, res) {
-        res.json({
-            "status": "ok"
-        })
+        try {
+            const result = await db.collection("cocktail_collection")
+                .insertOne({
+                    "userId": req.body.userId,
+                    "alcoholic": req.body.alcoholic,
+                    "distinctions": req.body.distinctions,
+                    "glassType": req.body.glassType,
+                    "imageUrl": req.body.imageUrl,
+                    "likes": req.body.likes,
+                    "name": req.body.name,
+                    "preparation": req.body.preparation,
+                    "saved": req.body.saved,
+                    "dateAdded": new Date()
+                });
+            res.json({
+                "result": result
+            });
+        } catch (e) {
+            res.status(500);
+            res.json({
+                "error": "Database not available. Please try again later or contact the developer of this API."
+            })
+        }
     })
 }
 
