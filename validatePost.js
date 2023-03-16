@@ -43,7 +43,6 @@ const cocktailSchema = {
     }
   },
   "required": [
-    "_id",
     "userId",
     "alcoholic",
     "distinctions",

@@ -1,20 +1,25 @@
+// REQUIRE EXPRESS
 const express = require("express");
 const app = express();
 
+// REQUIRE CORS
 const cors = require("cors");
 
 // VALIDATIONS
 const validatePost = require("./validatePost");
+
+// MONGO
+const { ObjectId } = require("mongodb");
+const MongoClient = require("mongodb").MongoClient;
 
 // ENABLE PROCESSING JSON DATA
 app.use(express.json());
 // ENABLE CORS
 app.use(cors());
 
+// URI TO STORE MONGO URI
 require("dotenv").config();
 const MongoUri = process.env.URI
-
-const MongoClient = require("mongodb").MongoClient;
 
 
 async function connect() {
@@ -71,6 +76,31 @@ async function connect() {
                 "error": "Database not available. Please try again later or contact the developer of this API."
             })
         }
+    });
+
+    // UPDATE COCKTAIL POST
+    app.put("/cocktails/:post_id", validatePost, async function(req,res) {
+        const postId = req.params.post_id;
+        const updated = await db.collection("cocktail_collection")
+                .updateOne({
+                    "_id": new ObjectId(postId)
+                }, {
+                    "$set": {
+                        "userId": req.body.userId,
+                        "alcoholic": req.body.alcoholic,
+                        "distinctions": req.body.distinctions,
+                        "glassType": req.body.glassType,
+                        "imageUrl": req.body.imageUrl,
+                        "likes": req.body.likes,
+                        "name": req.body.name,
+                        "preparation": req.body.preparation,
+                        "saved": req.body.saved,
+                        "dateAdded": req.body.dateAdded
+                    }
+                });
+        res.json({
+            "result": updated
+        })
     });
 }
 
