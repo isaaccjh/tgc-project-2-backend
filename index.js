@@ -52,7 +52,7 @@ async function connect() {
     });
 
     // POST NEW COCKTAIL [CREATE]
-    app.post("/new-post", validatePost, async function (req, res) {
+    app.post("/cocktails/new-post", validatePost, async function (req, res) {
         try {
             const result = await db.collection("cocktail_collection")
                 .insertOne({
@@ -78,7 +78,7 @@ async function connect() {
         }
     });
 
-    // UPDATE COCKTAIL POST
+    // EDIT COCKTAIL POST [UPDATE]
     app.put("/cocktails/:post_id", validatePost, async function(req,res) {
         const postId = req.params.post_id;
         const updated = await db.collection("cocktail_collection")
@@ -102,11 +102,22 @@ async function connect() {
             "result": updated
         })
     });
+
+    // DELETE COCKTAIL POST [DELETE]
+    app.delete("/cocktails/:post_id", async function(req,res) {
+        const result = await db.collection("cocktail_collection")
+                .deleteOne({
+                    "_id": new ObjectId(req.params.post_id)
+                })
+        res.json({
+            "result": result
+        })
+    })
 }
 
 connect();
 
-app.listen(5500, () => {
+app.listen(3000, () => {
     console.log("Server has started");
 })
 
