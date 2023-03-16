@@ -18,14 +18,17 @@ async function connect() {
     const client = await MongoClient.connect(MongoUri,{"useUnifiedTopology": true});
 
     const db = client.db("cocktail");
-
-    // app.get("/", (req, res) => {
-    //     res.send("<h1>Conneted to express</h1>")
-    // });
     
     app.get("/", async function(req,res) {
-        const ingredients = await db.collection("ingredients_collection").find({}).limit(10).toArray();
-        res.json(ingredients);
+        const cocktail = await db.collection("cocktail_collection").find({}).limit(2).toArray();
+        res.json(cocktail);
+    })
+
+    app.post("/add-cocktail", async function(req,res) {
+        console.log(req.body);
+        res.json({
+            "status": "ok"
+        })
     })
 }
 
