@@ -21,13 +21,14 @@ app.use(cors());
 require("dotenv").config();
 const MongoUri = process.env.URI
 
+// TO DO: FILTER INGREDIENTS BY NAME
 async function ingredients() {
     const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
 
     const db = client.db("cocktail");
 
-    app.get("/cocktails/ingredients", async function(req, res) {
-         
+    app.get("/cocktails/ingredients", async function (req, res) {
+
         const filter = {}
 
         const ingredients = await db.collection("ingredients_collection").find(filter).toArray();
@@ -37,17 +38,17 @@ async function ingredients() {
 
 ingredients();
 
-
+// TO DO: FILTER POSTS BY USER, BY AVERAGE REVIEWS
 async function posts() {
     const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
 
     const db = client.db("cocktail");
-    
+
     // GET ALL COCKTAILS [READ]
     app.get("/cocktails", async function (req, res) {
         // FOR SEARCH FILTER
         const filter = {};
-        
+
         if (req.query.name) {
             filter["name"] = req.query.name;
         };
@@ -96,36 +97,36 @@ async function posts() {
     });
 
     // EDIT COCKTAIL POST [UPDATE]
-    app.put("/cocktails/:post_id", validatePost, async function(req,res) {
+    app.put("/cocktails/:post_id", validatePost, async function (req, res) {
         const postId = req.params.post_id;
         const updated = await db.collection("cocktail_collection")
-                .updateOne({
-                    "_id": new ObjectId(postId)
-                }, {
-                    "$set": {
-                        "userId": req.body.userId,
-                        "alcoholic": req.body.alcoholic,
-                        "distinctions": req.body.distinctions,
-                        "glassType": req.body.glassType,
-                        "imageUrl": req.body.imageUrl,
-                        "likes": req.body.likes,
-                        "name": req.body.name,
-                        "preparation": req.body.preparation,
-                        "saved": req.body.saved,
-                        "dateAdded": req.body.dateAdded
-                    }
-                });
+            .updateOne({
+                "_id": new ObjectId(postId)
+            }, {
+                "$set": {
+                    "userId": req.body.userId,
+                    "alcoholic": req.body.alcoholic,
+                    "distinctions": req.body.distinctions,
+                    "glassType": req.body.glassType,
+                    "imageUrl": req.body.imageUrl,
+                    "likes": req.body.likes,
+                    "name": req.body.name,
+                    "preparation": req.body.preparation,
+                    "saved": req.body.saved,
+                    "dateAdded": req.body.dateAdded
+                }
+            });
         res.json({
             "result": updated
         })
     });
 
     // DELETE COCKTAIL POST [DELETE]
-    app.delete("/cocktails/:post_id", async function(req,res) {
+    app.delete("/cocktails/:post_id", async function (req, res) {
         const result = await db.collection("cocktail_collection")
-                .deleteOne({
-                    "_id": new ObjectId(req.params.post_id)
-                })
+            .deleteOne({
+                "_id": new ObjectId(req.params.post_id)
+            })
         res.json({
             "result": result
         })
@@ -134,20 +135,21 @@ async function posts() {
 
 posts();
 
+// TO DO: ALLOW FOR SEARCH BY USERNAME
 async function users() {
     const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
 
     const db = client.db("cocktail");
 
     // GET ALL USERS [READ]
-    app.get("/users", async function(req, res) {
+    app.get("/users", async function (req, res) {
         const users = await db.collection("user_collection")
-                                .find({}).toArray();
+            .find({}).toArray();
         res.json(users);
     })
-    
+
     // NEW USER REGISTRATION [CREATE]
-    app.post("/users/register", async function(req, res) {
+    app.post("/users/register", async function (req, res) {
         try {
             const result = await db.collection("user_collection").insertOne({
                 "name": req.body.name,
@@ -174,7 +176,7 @@ async function users() {
     })
 
     // UPDATE PROFILE [UPDATE]
-    app.put("/users/edit/:user_id", async function(req, res){
+    app.put("/users/edit/:user_id", async function (req, res) {
         const userId = req.params.user_id;
         try {
             const updateUser = await db.collection("user_collection").updateOne({
@@ -206,7 +208,7 @@ async function users() {
     })
 
     // DELETE PROFILE [DELETE]
-    app.delete("/users/delete/:user_id", async function(req, res) {
+    app.delete("/users/delete/:user_id", async function (req, res) {
         const deleted = await db.collection("user_collection").deleteOne({
             "_id": new ObjectId(req.params.user_id)
         });
@@ -218,6 +220,29 @@ async function users() {
 
 users();
 
+// TO DO:
+async function reviews() {
+    const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
+
+    const db = client.db("cocktail");
+
+    app.get("/cocktails/:post_id/reviews", async function (req, res) {
+        try {
+            const postId = new ObjectId(req.params.post_id)
+            const filter = { "cocktailId": postId }
+
+            const result = await db.collection("reviews_collection").find(filter).toArray();
+            res.json(result);
+
+        } catch (e) {
+            console.log(e);
+        }
+    })
+
+
+}
+
+reviews();
 
 
 
