@@ -21,6 +21,22 @@ app.use(cors());
 require("dotenv").config();
 const MongoUri = process.env.URI
 
+async function ingredients() {
+    const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
+
+    const db = client.db("cocktail");
+
+    app.get("/cocktails/ingredients", async function(req, res) {
+         
+        const filter = {}
+
+        const ingredients = await db.collection("ingredients_collection").find(filter).toArray();
+        res.json(ingredients);
+    })
+};
+
+ingredients();
+
 
 async function posts() {
     const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
@@ -114,7 +130,7 @@ async function posts() {
             "result": result
         })
     })
-}
+};
 
 posts();
 
@@ -198,9 +214,13 @@ async function users() {
             "result": deleted
         })
     })
-}
+};
 
 users();
+
+
+
+
 
 app.listen(5500, () => {
     console.log("Server has started");
