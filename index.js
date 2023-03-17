@@ -22,13 +22,14 @@ require("dotenv").config();
 const MongoUri = process.env.URI
 
 
-async function connect() {
+async function posts() {
     const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
 
     const db = client.db("cocktail");
     
     // GET ALL COCKTAILS [READ]
     app.get("/cocktails", async function (req, res) {
+        // FOR SEARCH FILTER
         const filter = {};
         
         if (req.query.name) {
@@ -61,10 +62,10 @@ async function connect() {
                     "distinctions": req.body.distinctions,
                     "glassType": req.body.glassType,
                     "imageUrl": req.body.imageUrl,
-                    "likes": req.body.likes,
+                    "likes": 0,
                     "name": req.body.name,
                     "preparation": req.body.preparation,
-                    "saved": req.body.saved,
+                    "saved": 0,
                     "dateAdded": new Date()
                 });
             res.json({
@@ -115,9 +116,50 @@ async function connect() {
     })
 }
 
-connect();
+posts();
 
-app.listen(3000, () => {
+async function users() {
+    const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
+
+    const db = client.db("cocktail");
+
+    // GET ALL USERS [READ]
+    app.get("/users", async function(req, res) {
+        const users = await db.collection("user_collection").find({}).toArray();
+        res.json(users);
+    })
+    
+    // NEW USER REGISTRATION [CREATE]
+    app.post("/users/register", async function(req, res) {
+        try {
+            const result = await db.collection("user_collection").insertOne({
+                "name": req.body.name,
+                "dateOfBirth": req.body.dateOfBirth,
+                "email": req.body.email,
+                "gender": req.body.gender,
+                "country": req.body.country,
+                "password": req.body.password,
+                "savedRecipes": [],
+                "posts": 0,
+                "gender": req.body.gender,
+                "dateJoined": new Date()
+            });
+            res.json({
+                "result": result
+            })
+        } catch (e) {
+            console.log(e)
+            res.status(500);
+            res.json({
+                "error": "Database not available. Please try again later or contact the developer of this API."
+            })
+        }
+    })
+}
+
+users();
+
+app.listen(5500, () => {
     console.log("Server has started");
 })
 
