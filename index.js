@@ -125,7 +125,8 @@ async function users() {
 
     // GET ALL USERS [READ]
     app.get("/users", async function(req, res) {
-        const users = await db.collection("user_collection").find({}).toArray();
+        const users = await db.collection("user_collection")
+                                .find({}).toArray();
         res.json(users);
     })
     
@@ -141,7 +142,7 @@ async function users() {
                 "password": req.body.password,
                 "savedRecipes": [],
                 "posts": 0,
-                "gender": req.body.gender,
+                "username": req.body.username,
                 "dateJoined": new Date()
             });
             res.json({
@@ -154,6 +155,48 @@ async function users() {
                 "error": "Database not available. Please try again later or contact the developer of this API."
             })
         }
+    })
+
+    // UPDATE PROFILE [UPDATE]
+    app.put("/users/edit/:user_id", async function(req, res){
+        const userId = req.params.user_id;
+        try {
+            const updateUser = await db.collection("user_collection").updateOne({
+                "_id": new ObjectId(userId)
+            }, {
+                "$set": {
+                    "name": req.body.name,
+                    "dateOfBirth": req.body.dateOfBirth,
+                    "username": req.body.username,
+                    "email": req.body.email,
+                    "gender": req.body.gender,
+                    "country": req.body.country,
+                    "password": req.body.password,
+                    "savedRecipes": req.body.savedRecipes,
+                    "posts": req.body.posts,
+                    "dateJoined": req.body.dateJoined
+                }
+            });
+            res.json({
+                "result": updateUser
+            })
+        } catch (e) {
+            console.log(e)
+            res.status(500);
+            res.json({
+                "error": "Database not available. Please try again later or contact the developer of this API."
+            });
+        }
+    })
+
+    // DELETE PROFILE [DELETE]
+    app.delete("/users/delete/:user_id", async function(req, res) {
+        const deleted = await db.collection("user_collection").deleteOne({
+            "_id": new ObjectId(req.params.user_id)
+        });
+        res.json({
+            "result": deleted
+        })
     })
 }
 
