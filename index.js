@@ -226,6 +226,7 @@ async function reviews() {
 
     const db = client.db("cocktail");
 
+    // GET REVIEWS FROM SELECTED POST [READ]
     app.get("/cocktails/:post_id/reviews", async function (req, res) {
         try {
             const postId = new ObjectId(req.params.post_id)
@@ -239,7 +240,25 @@ async function reviews() {
         }
     })
 
+    // POST A NEW COMMENT ON A SELECTED POST [CREATE]
+    // TO DO : FIND OUT HOW TO GET THE USER ID
+    app.post("/cocktails/:post_id/new-review", async function(req, res) {
+        try {
+            const postId = new ObjectId(req.params.post_id);
 
+            const result = await db.collection("reviews_collection").insertOne({
+                            "cocktailId": postId,
+                            "comments": req.body.comments,
+                            "rating": req.body.rating,
+                            "userId": req.body.userId
+            })
+            res.json({
+                "result": result
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    })
 }
 
 reviews();
