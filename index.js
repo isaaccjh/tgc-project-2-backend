@@ -153,7 +153,7 @@ async function users() {
         try {
             const result = await db.collection("user_collection").insertOne({
                 "name": req.body.name,
-                "dateOfBirth": req.body.dateOfBirth,
+                "dateOfBirth": new Date(req.body.dateOfBirth),
                 "email": req.body.email,
                 "gender": req.body.gender,
                 "country": req.body.country,
@@ -184,7 +184,7 @@ async function users() {
             }, {
                 "$set": {
                     "name": req.body.name,
-                    "dateOfBirth": req.body.dateOfBirth,
+                    "dateOfBirth": new Date(req.body.dateOfBirth),
                     "username": req.body.username,
                     "email": req.body.email,
                     "gender": req.body.gender,
