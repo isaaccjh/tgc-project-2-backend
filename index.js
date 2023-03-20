@@ -97,7 +97,7 @@ async function posts() {
     });
 
     // EDIT COCKTAIL POST [UPDATE]
-    app.put("/cocktails/:post_id", validatePost, async function (req, res) {
+    app.put("/cocktails/edit/:post_id", validatePost, async function (req, res) {
         const postId = req.params.post_id;
         const updated = await db.collection("cocktail_collection")
             .updateOne({
@@ -122,7 +122,7 @@ async function posts() {
     });
 
     // DELETE COCKTAIL POST [DELETE]
-    app.delete("/cocktails/:post_id", async function (req, res) {
+    app.delete("/cocktails/delete/:post_id", async function (req, res) {
         const result = await db.collection("cocktail_collection")
             .deleteOne({
                 "_id": new ObjectId(req.params.post_id)
