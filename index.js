@@ -64,13 +64,13 @@ async function posts() {
             }
         }
 
-        const cocktail = await db.collection("cocktail_collection").find(filter).limit(2).toArray();
+        const cocktail = await db.collection("cocktail_collection").find(filter).toArray();
         res.json(cocktail);
 
-    });
+    }); 
 
     // POST NEW COCKTAIL [CREATE]
-    app.post("/cocktails/new-post", validatePost, async function (req, res) {
+    app.post("/cocktails/new-post", async function (req, res) {
         try {
             const result = await db.collection("cocktail_collection")
                 .insertOne({

@@ -12,7 +12,7 @@ const cocktailSchema = {
       }
     },
     "alcoholic": {
-      "type": "boolean"
+      "type": "string"
     },
     "distinctions": {
       "type": "array",
