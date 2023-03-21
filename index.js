@@ -68,6 +68,16 @@ async function posts() {
         res.json(cocktail);
 
     }); 
+    
+    // GET SPECIFIC COCKTAIL [READ]
+    app.get("/cocktails/:post_id", async function (req,res) {
+        const postId = req.params.post_id;
+
+        const cocktail = await db.collection("cocktail_collection").findOne({
+            "_id": new ObjectId(postId)
+        }).toArray();
+        res.json(cocktail);
+    })
 
     // POST NEW COCKTAIL [CREATE]
     app.post("/cocktails/new-post", async function (req, res) {
