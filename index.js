@@ -50,6 +50,9 @@ async function ingredients() {
 
 ingredients();
 
+// INGREDIENTS USAGE
+
+
 // TO DO: FILTER POSTS BY USER, BY AVERAGE REVIEWS
 async function posts() {
     const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
@@ -123,6 +126,10 @@ async function posts() {
             })
         }
     });
+
+    app.post("/cocktails/ingredients-used", async function (req, res) {
+         
+    })
 
     // EDIT COCKTAIL POST [UPDATE]
     app.put("/cocktails/edit/:post_id", async function (req, res) {
