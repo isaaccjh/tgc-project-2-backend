@@ -5,6 +5,9 @@ const app = express();
 // REQUIRE CORS
 const cors = require("cors");
 
+// REQUIRE JWT
+const jwt = require("jsonwebtoken");
+
 // VALIDATIONS
 const validatePost = require("./validatePost");
 
@@ -20,6 +23,15 @@ app.use(cors());
 // URI TO STORE MONGO URI
 require("dotenv").config();
 const MongoUri = process.env.URI
+
+// ROUTE TO GENERATE JWT
+
+const generateAccessToken = (id, email) => {
+    return jwt.sign({
+        "user_id": id,
+        "email": email
+    })
+}
 
 // TO DO: FILTER INGREDIENTS BY NAME
 async function ingredients() {
@@ -50,11 +62,17 @@ async function posts() {
         const filter = {};
 
         if (req.query.name) {
-            filter["name"] = req.query.name;
+            filter["name"] = {
+                "$regex": req.query.name,
+                "$options": "i"
+            }
         };
 
         if (req.query.glassType) {
-            filter["glassType"] = req.query.glassType;
+            filter["glassType"] = {
+                "$regex": req.query.glassType,
+                "$options": "i"
+            }
         }
 
         if (req.query.distinction) {
@@ -107,7 +125,7 @@ async function posts() {
     });
 
     // EDIT COCKTAIL POST [UPDATE]
-    app.put("/cocktails/edit/:post_id", validatePost, async function (req, res) {
+    app.put("/cocktails/edit/:post_id", async function (req, res) {
         const postId = req.params.post_id;
         const updated = await db.collection("cocktail_collection")
             .updateOne({
