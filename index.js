@@ -128,10 +128,6 @@ async function posts() {
                 })
 
 
-
-
-
-
             res.json({
                 "post": postResult,
                 "ingredients": ingredientsResults
