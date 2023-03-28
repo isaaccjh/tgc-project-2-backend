@@ -103,7 +103,7 @@ async function posts() {
     // POST NEW COCKTAIL [CREATE]
     app.post("/cocktails/new-post", async function (req, res) {
         try {
-            const result = await db.collection("cocktail_collection")
+            const postResult = await db.collection("cocktail_collection")
                 .insertOne({
                     "userId": req.body.userId,
                     "alcoholic": req.body.alcoholic,
@@ -115,9 +115,26 @@ async function posts() {
                     "preparation": req.body.preparation,
                     "saved": 0,
                     "dateAdded": new Date()
-                });
+                }); 
+
+
+            const cocktailId = postResult.insertedId;
+            const ingredients = req.body.ingredients;
+
+            const ingredientsResults = await db.collection("ingredient_usage")
+                .insertOne({
+                    "cocktailId": cocktailId,
+                    "ingredients": ingredients
+                })
+
+
+
+
+
+
             res.json({
-                "result": result
+                "post": postResult,
+                "ingredients": ingredientsResults
             });
         } catch (e) {
             res.status(500);
@@ -127,9 +144,6 @@ async function posts() {
         }
     });
 
-    app.post("/cocktails/ingredients-used", async function (req, res) {
-         
-    })
 
     // EDIT COCKTAIL POST [UPDATE]
     app.put("/cocktails/edit/:post_id", async function (req, res) {
