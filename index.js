@@ -56,7 +56,7 @@ async function ingredient_usage() {
 
     const db = client.db("cocktail");
 
-    app.get("/cocktails/ingredients_used", async function (req, res) {
+    app.get("/cocktails/ingredients-used", async function (req, res) {
 
         const filter = {}
 
