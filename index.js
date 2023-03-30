@@ -172,6 +172,12 @@ async function posts() {
             .deleteOne({
                 "_id": new ObjectId(req.params.post_id)
             })
+        
+        const deleteIngredients = await db.collection("ingredient_usage")
+            .deleteOne({
+                "cocktailId": new ObjectId(req.params.post_id)
+            })
+
         res.json({
             "result": result
         })
