@@ -51,7 +51,22 @@ async function ingredients() {
 ingredients();
 
 // INGREDIENTS USAGE
+async function ingredient_usage() {
+    const client = await MongoClient.connect(MongoUri, { "useUnifiedTopology": true });
 
+    const db = client.db("cocktail");
+
+    app.get("/cocktails/ingredients_used", async function (req, res) {
+
+        const filter = {}
+
+        const ingredientsUsed = await db.collection("ingredient_usage").find(filter).toArray();
+
+        res.json(ingredientsUsed);
+    })
+}
+
+ingredient_usage();
 
 // TO DO: FILTER POSTS BY USER, BY AVERAGE REVIEWS
 async function posts() {
