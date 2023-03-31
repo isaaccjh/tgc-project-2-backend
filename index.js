@@ -8,8 +8,6 @@ const cors = require("cors");
 // REQUIRE JWT
 const jwt = require("jsonwebtoken");
 
-// VALIDATIONS
-const validatePost = require("./validatePost");
 
 // MONGO
 const { ObjectId } = require("mongodb");
