@@ -79,9 +79,8 @@ async function posts() {
         /*SEARCH INGREDIENT STEPS:
         1. FIND OUT INGREDIENT ID THAT IS BEING SEARCHED 
         2. MATCH INGREDIENT IN INGREDIENT COLLETION
-        3. FIND ALL INGREDIENT ID THAT MATCHES INGREDIENT ID IN INGREDIENT_USAGE COLLECTION
-        4. FIND ALL COCKTAILS THAT MATCHES COCKTAIL ID WITH THE INGREDIENT INSIDE
-        5. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
+        3. FIND ALL COCKTAIL ID THAT MATCHES INGREDIENT ID IN INGREDIENT_USAGE COLLECTION
+        4. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
 
         const filter = {};
         
@@ -112,6 +111,16 @@ async function posts() {
                 "$options": "i"
             }
         }
+
+        // FIND INGREDIENT ID
+        const searchedIngredient = await db.collection("ingredient_collection")
+                                    .findOne({
+                                        name: req.query.ingredient
+                                    })
+        const searchedIngredientId = searchedIngredient._id
+
+        // FIND COCKTAIL THAT USES INGREDIENT
+        const cocktailWithIngredient = await db.collection("c")
 
         const cocktail = await db.collection("cocktail_collection").find(filter).toArray();
         res.json(cocktail);
