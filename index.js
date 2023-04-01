@@ -75,14 +75,29 @@ async function posts() {
     // GET ALL COCKTAILS [READ]
     app.get("/cocktails", async function (req, res) {
         // FOR SEARCH FILTER
-        const filter = {};
 
+        /*SEARCH INGREDIENT STEPS:
+        1. FIND OUT INGREDIENT ID THAT IS BEING SEARCHED 
+        2. MATCH INGREDIENT IN INGREDIENT COLLETION
+        3. FIND ALL INGREDIENT ID THAT MATCHES INGREDIENT ID IN INGREDIENT_USAGE COLLECTION
+        4. FIND ALL COCKTAILS THAT MATCHES COCKTAIL ID WITH THE INGREDIENT INSIDE
+        5. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
+
+        const filter = {};
+        
         if (req.query.name) {
             filter["name"] = {
                 "$regex": req.query.name,
                 "$options": "i"
             }
         };
+
+        if (req.query.alcoholic) {
+            filter["alcoholic"] = {
+                "$regex": req.query.alcoholic,
+                "$options": "i"
+            }
+        }
 
         if (req.query.glassType) {
             filter["glassType"] = {
