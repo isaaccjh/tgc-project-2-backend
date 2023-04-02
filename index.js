@@ -83,6 +83,7 @@ async function posts() {
         4. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
 
         const filter = {};
+        
 
         if (req.query.name) {
             filter["name"] = {
@@ -119,9 +120,23 @@ async function posts() {
                     name: req.query.ingredient
                 })
 
+            // INGREDIENT ID OF SEARCHED INGREDIENT
+             const searchedId = searchedIngredient?._id
+             console.log("searchedId:",searchedId)
 
-            const ingredientId = searchedIngredient?._id
-            console.log(ingredientId) 
+            // FIND ALL COCKTAILS WITH THIS INGREDIENT
+            const postsWithIngredient = await db.collection("ingredient_usage")
+                .find({
+                    ingredients: {
+                        $elemMatch: {
+                            ingredientId: new ObjectId(searchedId)
+                        }
+                    }
+                }, {
+                    cocktailId: 1
+                }).toArray();
+
+            console.log("postsWithIngredient:", postsWithIngredient)
         }
 
         // FIND COCKTAIL THAT USES INGREDIENT
