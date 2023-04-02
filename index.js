@@ -83,7 +83,7 @@ async function posts() {
         4. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
 
         const filter = {};
-        
+
         if (req.query.name) {
             filter["name"] = {
                 "$regex": req.query.name,
@@ -113,22 +113,26 @@ async function posts() {
         }
 
         // FIND INGREDIENT ID
-        const searchedIngredient = await db.collection("ingredient_collection")
-                                    .findOne({
-                                        name: req.query.ingredient
-                                    })
-        const searchedIngredientId = searchedIngredient._id
+        if (req.query.ingredient) {
+            const searchedIngredient = await db.collection("ingredients_collection")
+                .findOne({
+                    name: req.query.ingredient
+                })
+
+
+            const ingredientId = searchedIngredient?._id
+            console.log(ingredientId) 
+        }
 
         // FIND COCKTAIL THAT USES INGREDIENT
-        const cocktailWithIngredient = await db.collection("c")
 
         const cocktail = await db.collection("cocktail_collection").find(filter).toArray();
-        res.json(cocktail);
+        res.json(cocktail); 
 
-    }); 
-    
+    });
+
     // GET SPECIFIC COCKTAIL [READ]
-    app.get("/cocktails/:post_id", async function (req,res) {
+    app.get("/cocktails/:post_id", async function (req, res) {
         const postId = req.params.post_id;
 
         const cocktail = await db.collection("cocktail_collection").findOne({
@@ -152,7 +156,7 @@ async function posts() {
                     "preparation": req.body.preparation,
                     "saved": 0,
                     "dateAdded": new Date()
-                }); 
+                });
 
 
             const cocktailId = postResult.insertedId;
@@ -209,7 +213,7 @@ async function posts() {
             .deleteOne({
                 "_id": new ObjectId(req.params.post_id)
             })
-        
+
         const deleteIngredients = await db.collection("ingredient_usage")
             .deleteOne({
                 "cocktailId": new ObjectId(req.params.post_id)
@@ -330,15 +334,15 @@ async function reviews() {
 
     // POST A NEW COMMENT ON A SELECTED POST [CREATE]
     // TO DO : FIND OUT HOW TO GET THE USER ID
-    app.post("/cocktails/:post_id/new-review", async function(req, res) {
+    app.post("/cocktails/:post_id/new-review", async function (req, res) {
         try {
             const postId = new ObjectId(req.params.post_id);
 
             const result = await db.collection("reviews_collection").insertOne({
-                            "cocktailId": postId,
-                            "comments": req.body.comments,
-                            "rating": req.body.rating,
-                            "userId": req.body.userId
+                "cocktailId": postId,
+                "comments": req.body.comments,
+                "rating": req.body.rating,
+                "userId": req.body.userId
             })
             res.json({
                 "result": result
