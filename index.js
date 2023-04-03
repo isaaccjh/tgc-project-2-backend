@@ -122,26 +122,32 @@ async function posts() {
 
             // INGREDIENT ID OF SEARCHED INGREDIENT
              const searchedId = searchedIngredient?._id
-             console.log("searchedId:",searchedId)
 
-            // FIND ALL COCKTAILS WITH THIS INGREDIENT
-            const postsWithIngredient = await db.collection("ingredient_usage")
-                .find({
-                    ingredients: {
-                        $elemMatch: {
-                            ingredientId: new ObjectId(searchedId)
-                        }
-                    }
-                }, {
-                    cocktailId: 1
-                }).toArray();
-
-            console.log("postsWithIngredient:", postsWithIngredient)
+             filter["ingredients"] = {
+                $elemMatch: {
+                    "ingredients.ingredientId.$oid": searchedId.toString()
+                }
+             }
         }
 
         // FIND COCKTAIL THAT USES INGREDIENT
 
-        const cocktail = await db.collection("cocktail_collection").find(filter).toArray();
+        const cocktail = await db.collection("cocktail_collection").aggregate([
+            {
+                $lookup: {
+                    from: "ingredient_usage",
+                    localField: "_id",
+                    foreignField: "cocktailId",
+                    as: "ingredients"
+                }     
+            }, {
+                $match: filter
+            }
+        ]).toArray();
+
+        
+        console.log("filter:", filter)
+        console.log("response:", cocktail)
         res.json(cocktail); 
 
     });
