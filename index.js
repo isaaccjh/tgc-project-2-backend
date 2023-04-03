@@ -145,9 +145,6 @@ async function posts() {
             }
         ]).toArray();
 
-        
-        console.log("filter:", filter)
-        console.log("response:", cocktail)
         res.json(cocktail); 
 
     });
