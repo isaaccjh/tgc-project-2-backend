@@ -107,9 +107,10 @@ async function posts() {
         }
 
         if (req.query.distinction) {
+            query = Array.isArray(req.query.distinction) ? req.query.distinction : [req.query.distinction];
+
             filter["distinctions"] = {
-                "$regex": req.query.distinction,
-                "$options": "i"
+                "$all": query
             }
         }
 
