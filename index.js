@@ -83,7 +83,7 @@ async function posts() {
         4. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
 
         const filter = {};
-        
+
 
         if (req.query.name) {
             filter["name"] = {
@@ -117,18 +117,25 @@ async function posts() {
         // FIND INGREDIENT ID
         if (req.query.ingredient) {
             const searchedIngredient = await db.collection("ingredients_collection")
-                .findOne({
-                    name: req.query.ingredient
-                })
+                .find({
+                    name: {
+                        $in: req.query.ingredient
+                    }
+                }).toArray();
+
+            console.log(searchedIngredient)
 
             // INGREDIENT ID OF SEARCHED INGREDIENT
-             const searchedId = searchedIngredient?._id
+            const searchedId = [searchedIngredient?._id]
+            console.log(searchedId)
 
-             filter["ingredients"] = {
-                $elemMatch: {
-                    "ingredients.ingredientId.$oid": searchedId.toString()
+            filter["ingredients"] = {
+                $or: {
+                    $elemMatch: {
+                        "ingredients.ingredientId.$oid": searchedId.toString()
+                    }
                 }
-             }
+            }
         }
 
         // FIND COCKTAIL THAT USES INGREDIENT
@@ -140,13 +147,13 @@ async function posts() {
                     localField: "_id",
                     foreignField: "cocktailId",
                     as: "ingredients"
-                }     
+                }
             }, {
                 $match: filter
             }
         ]).toArray();
 
-        res.json(cocktail); 
+        res.json(cocktail);
 
     });
 
