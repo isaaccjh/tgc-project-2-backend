@@ -107,7 +107,7 @@ async function posts() {
         }
 
         if (req.query.distinction) {
-            query = Array.isArray(req.query.distinction) ? req.query.distinction : [req.query.distinction];
+            const query = Array.isArray(req.query.distinction) ? req.query.distinction : [req.query.distinction];
 
             filter["distinctions"] = {
                 "$all": query
@@ -116,17 +116,19 @@ async function posts() {
 
         // FIND INGREDIENT ID
         if (req.query.ingredient) {
+            const query = Array.isArray(req.query.ingredient) ? req.query.ingredient : [req.query.ingredient];
+
             const searchedIngredient = await db.collection("ingredients_collection")
                 .find({
                     name: {
-                        $in: req.query.ingredient
+                        $in: query
                     }
                 }).toArray();
 
             console.log(searchedIngredient)
 
             // INGREDIENT ID OF SEARCHED INGREDIENT
-            const searchedId = searchedIngredient?.map(i => i._id )
+            const searchedId = searchedIngredient?.map(ingredient => ingredient._id.toString() )
             console.log(searchedId)
 
             filter["ingredients"] = {
