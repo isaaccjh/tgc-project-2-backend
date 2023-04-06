@@ -126,7 +126,7 @@ async function posts() {
             console.log(searchedIngredient)
 
             // INGREDIENT ID OF SEARCHED INGREDIENT
-            const searchedId = [searchedIngredient?._id]
+            const searchedId = searchedIngredient?.map(i => i._id )
             console.log(searchedId)
 
             filter["ingredients"] = {
