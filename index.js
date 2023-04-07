@@ -83,7 +83,7 @@ async function posts() {
         4. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
 
         const filter = {};
-
+        
 
         if (req.query.name) {
             filter["name"] = {
@@ -107,7 +107,7 @@ async function posts() {
         }
 
         if (req.query.distinction) {
-            const query = Array.isArray(req.query.distinction) ? req.query.distinction : [req.query.distinction];
+            query = Array.isArray(req.query.distinction) ? req.query.distinction : [req.query.distinction]
 
             filter["distinctions"] = {
                 "$all": query
@@ -116,33 +116,20 @@ async function posts() {
 
         // FIND INGREDIENT ID
         if (req.query.ingredient) {
-            const query = Array.isArray(req.query.ingredient) ? req.query.ingredient : [req.query.ingredient];
-
             const searchedIngredient = await db.collection("ingredients_collection")
-                .find({
-                    name: {
-                        $in: query
-                    }
-                }).toArray();
+                .findOne({
+                    name: req.query.ingredient
+                })
 
             // INGREDIENT ID OF SEARCHED INGREDIENT
-            const searchedId = searchedIngredient?.map(ingredient => ingredient._id.toString() )
+             const searchedId = searchedIngredient?._id
 
-            console.log(searchedId)
-
-            // filter["ingredients"] = {
-            //     ingredients: {
-            //         $elemMatch: {
-            //             "measurements": "12"
-            //         }
-            //     }
-            // }
-
-            console.log("searchedIngredient:", searchedIngredient)
-            console.log("this is the filter:", filter.ingredients)
+             filter["ingredients"] = {
+                $elemMatch: {
+                    "ingredients.ingredientId.$oid": searchedId.toString()
+                }
+             }
         }
-
-    
 
         // FIND COCKTAIL THAT USES INGREDIENT
 
@@ -153,18 +140,13 @@ async function posts() {
                     localField: "_id",
                     foreignField: "cocktailId",
                     as: "ingredients"
-                }
+                }     
             }, {
                 $match: filter
             }
         ]).toArray();
 
-        let test = []
-        cocktail.forEach(i => test.push(i.ingredients))
-        console.log("test:", test);
-        console.log("see array:",test[0][0]._id.toString())
-
-        res.json(cocktail);
+        res.json(cocktail); 
 
     });
 
