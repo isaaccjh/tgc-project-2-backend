@@ -125,20 +125,24 @@ async function posts() {
                     }
                 }).toArray();
 
-            console.log(searchedIngredient)
-
             // INGREDIENT ID OF SEARCHED INGREDIENT
             const searchedId = searchedIngredient?.map(ingredient => ingredient._id.toString() )
+
             console.log(searchedId)
 
-            filter["ingredients"] = {
-                $or: {
-                    $elemMatch: {
-                        "ingredients.ingredientId.$oid": searchedId.toString()
-                    }
-                }
-            }
+            // filter["ingredients"] = {
+            //     ingredients: {
+            //         $elemMatch: {
+            //             "measurements": "12"
+            //         }
+            //     }
+            // }
+
+            console.log("searchedIngredient:", searchedIngredient)
+            console.log("this is the filter:", filter.ingredients)
         }
+
+    
 
         // FIND COCKTAIL THAT USES INGREDIENT
 
@@ -154,6 +158,11 @@ async function posts() {
                 $match: filter
             }
         ]).toArray();
+
+        let test = []
+        cocktail.forEach(i => test.push(i.ingredients))
+        console.log("test:", test);
+        console.log("see array:",test[0][0]._id.toString())
 
         res.json(cocktail);
 
