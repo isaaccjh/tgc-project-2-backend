@@ -150,6 +150,23 @@ async function posts() {
 
     });
 
+    app.get("cocktails/:post_id", async function (req, res) {
+        try {
+            const result = await db.collection("cocktail_collection")
+                .find({
+                    "_id": new ObjectId(req.params.post_id)
+                })
+
+                res.json(result);
+            
+        } catch (e) {
+            res.status(500);
+            res.json({
+                "error": "Database not available. Please try again later or contact the developer of this API."
+            })
+        }
+    })
+
     // POST NEW COCKTAIL [CREATE]
     app.post("/cocktails/new-post", async function (req, res) {
         try {
