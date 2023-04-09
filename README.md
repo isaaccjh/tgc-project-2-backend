@@ -3,7 +3,7 @@
 ## Database Structure
 
 ### Cocktail Collection
-```http
+```
   GET /cocktails/
 ```
 | Parameter | Type     | Description                |
@@ -18,8 +18,11 @@
 
 ### Ingredient Usage Collection
 ```
-  GET /cocktails/
+  GET /cocktails/ingredients-used
 ```
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `-` | `-` | **No parameter required** |
 
 #### The data structure of the Ingredient Usage collection is as shown below
 ![Ingredient Usage](./ingredient_usage.jpg)
