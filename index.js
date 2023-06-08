@@ -119,7 +119,7 @@ async function posts() {
             const searchedIngredient = await db.collection("ingredients_collection")
                 .findOne({
                     name: req.query.ingredient
-                })
+                }, { _id: 1, name: 1 })
 
             // INGREDIENT ID OF SEARCHED INGREDIENT
             const searchedId = searchedIngredient?._id
