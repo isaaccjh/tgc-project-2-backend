@@ -83,7 +83,7 @@ async function posts() {
         4. MATCH IT WITH THE REST OF THE SEARCH FILTERS*/
 
         const filter = {};
-        
+
 
         if (req.query.name) {
             filter["name"] = {
@@ -122,17 +122,16 @@ async function posts() {
                 })
 
             // INGREDIENT ID OF SEARCHED INGREDIENT
-             const searchedId = searchedIngredient?._id
+            const searchedId = searchedIngredient?._id
 
-             filter["ingredients"] = {
+            filter["ingredients"] = {
                 $elemMatch: {
                     "ingredients.ingredientId.$oid": searchedId.toString()
                 }
-             }
+            }
         }
 
         // FIND COCKTAIL THAT USES INGREDIENT
-
         const cocktail = await db.collection("cocktail_collection").aggregate([
             {
                 $lookup: {
@@ -140,13 +139,13 @@ async function posts() {
                     localField: "_id",
                     foreignField: "cocktailId",
                     as: "ingredients"
-                }     
+                }
             }, {
                 $match: filter
             }
         ]).toArray();
 
-        res.json(cocktail); 
+        res.json(cocktail);
 
     });
 
@@ -157,8 +156,8 @@ async function posts() {
                     "_id": new ObjectId(req.params.post_id)
                 })
 
-                res.json(result);
-            
+            res.json(result);
+
         } catch (e) {
             res.status(500);
             res.json({
@@ -169,6 +168,27 @@ async function posts() {
 
     // POST NEW COCKTAIL [CREATE]
     app.post("/cocktails/new-post", async function (req, res) {
+        if (!req.body.userId) {
+            res.status(400).send("UserID required");
+        }
+        if (!req.body.alcoholic) {
+            res.status(400).send("Alcoholic type required");
+        }
+        if (!req.body.distinctions) {
+            res.status(400).send("Distinctions required");
+        }
+        if (!req.body.glassType) {
+            res.status(400).send("Glass type required");
+        }
+        if (!req.body.imageUrl) {
+            res.status(400).send("Image URL required");
+        }
+        if (!req.body.name) {
+            res.status(400).send("Name required");
+        }
+        if (!req.body.preparation) {
+            res.status(400).send("Preparation steps required");
+        }
         try {
             const postResult = await db.collection("cocktail_collection")
                 .insertOne({
@@ -211,6 +231,27 @@ async function posts() {
     // EDIT COCKTAIL POST [UPDATE]
     app.put("/cocktails/edit/:post_id", async function (req, res) {
         const postId = req.params.post_id;
+        if (!req.body.userId) {
+            res.status(400).send("UserID required");
+        }
+        if (!req.body.alcoholic) {
+            res.status(400).send("Alcoholic type required");
+        }
+        if (!req.body.distinctions) {
+            res.status(400).send("Distinctions required");
+        }
+        if (!req.body.glassType) {
+            res.status(400).send("Glass type required");
+        }
+        if (!req.body.imageUrl) {
+            res.status(400).send("Image URL required");
+        }
+        if (!req.body.name) {
+            res.status(400).send("Name required");
+        }
+        if (!req.body.preparation) {
+            res.status(400).send("Preparation steps required");
+        }
         const updated = await db.collection("cocktail_collection")
             .updateOne({
                 "_id": new ObjectId(postId)
@@ -268,6 +309,27 @@ async function users() {
 
     // NEW USER REGISTRATION [CREATE]
     app.post("/users/register", async function (req, res) {
+        if (!req.body.name) {
+            res.status(400).send("Name required");
+        }
+        if (!req.body.dateOfBirth) {
+            res.status(400).send("Date of Birth type required");
+        }
+        if (!req.body.email) {
+            res.status(400).send("Email required");
+        }
+        if (!req.body.gender) {
+            res.status(400).send("Gender required");
+        }
+        if (!req.body.country) {
+            res.status(400).send("Country required");
+        }
+        if (!req.body.password) {
+            res.status(400).send("Password required");
+        }
+        if (!req.body.username) {
+            res.status(400).send("Username steps required");
+        }
         try {
             const result = await db.collection("user_collection").insertOne({
                 "name": req.body.name,
@@ -296,6 +358,27 @@ async function users() {
     // UPDATE PROFILE [UPDATE]
     app.put("/users/edit/:user_id", async function (req, res) {
         const userId = req.params.user_id;
+        if (!req.body.name) {
+            res.status(400).send("Name required");
+        }
+        if (!req.body.dateOfBirth) {
+            res.status(400).send("Date of Birth type required");
+        }
+        if (!req.body.email) {
+            res.status(400).send("Email required");
+        }
+        if (!req.body.gender) {
+            res.status(400).send("Gender required");
+        }
+        if (!req.body.country) {
+            res.status(400).send("Country required");
+        }
+        if (!req.body.password) {
+            res.status(400).send("Password required");
+        }
+        if (!req.body.username) {
+            res.status(400).send("Username steps required");
+        }
         try {
             const updateUser = await db.collection("user_collection").updateOne({
                 "_id": new ObjectId(userId)
